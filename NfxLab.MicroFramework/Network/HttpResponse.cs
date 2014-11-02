@@ -25,8 +25,6 @@ namespace NfxLab.MicroFramework.Network
         /// <returns></returns>
         public static HttpResponse Read(Stream stream)
         {
-            FrameworkLogs.Network.Info("Reading a HTTP response");
-
             HttpResponse response = new HttpResponse();
             StreamReader reader = new StreamReader(stream);
 
@@ -53,9 +51,6 @@ namespace NfxLab.MicroFramework.Network
             }
 
             reader.Close();
-
-            FrameworkLogs.Network.Info("Response read");
-            FrameworkLogs.Network.Debug(response.StatusCode, response.Reason, response.Content);
 
             return response;
         }

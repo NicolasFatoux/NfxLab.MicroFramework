@@ -37,7 +37,7 @@ namespace NfxLab.MicroFramework.Network
         public string Accept { get; set; }
         public string ContentType { get; set; }
         public string UserAgent { get; set; }
-        
+
         public string Content { get; set; }
 
 
@@ -67,10 +67,6 @@ namespace NfxLab.MicroFramework.Network
         /// <param name="stream">The stream.</param>
         public void Write(Stream stream)
         {
-            FrameworkLogs.Network.Info("Writing HTTP request into stream", this);
-            FrameworkLogs.Network.Debug(Host, Port, Url, Query, Method, Accept, ContentType, UserAgent, customHeaders, Content);
-
-
             StreamWriter writer = new StreamWriter(stream);
 
             // HTTP header
@@ -116,8 +112,6 @@ namespace NfxLab.MicroFramework.Network
             }
 
             writer.Close();
-
-            FrameworkLogs.Network.Info("HTTP request written");
         }
 
 

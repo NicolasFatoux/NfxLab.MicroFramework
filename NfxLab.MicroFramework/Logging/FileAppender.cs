@@ -10,18 +10,27 @@ namespace NfxLab.MicroFramework.Logging
 
         public FileAppender(string path)
         {
-            var stream = File.Open(path, FileMode.Append);
-            writer = new StreamWriter(stream);
+            try
+            {
+                var stream = File.Open(path, FileMode.Append);
+                writer = new StreamWriter(stream);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Can't initialize FileAppender : " + e);
+            }
         }
 
         public void Write(string message)
         {
             try
             {
-                writer.WriteLine(message);
+                if (writer != null)
+                    writer.WriteLine(message);
             }
-            catch
+            catch (Exception e)
             {
+                Debug.Print("Error while writing to FileAppender : " + e);
             }
         }
     }

@@ -37,11 +37,6 @@ namespace NfxLab.MicroFramework.Network
         /// <exception cref="System.ApplicationException">The xively server returned invalid status code.</exception>
         public void Put(string[] ids, object[] values)
         {
-            FrameworkLogs.Network.Info("Sending new values to the xively feed",
-                                        "ids :", ids, "values : ", values,
-                                        "url :", url,
-                                        "api key :", apiKey);
-
             var datastreams = new Hashtable[ids.Length];
             for (int i = 0; i < ids.Length; i++)
                 datastreams[i] = new Hashtable
@@ -70,8 +65,6 @@ namespace NfxLab.MicroFramework.Network
 
             if (response.StatusCode != 200)
                 throw new ApplicationException("Xively server returned invalid status code : " + response.StatusCode);
-
-            FrameworkLogs.Network.Info("Xively feed updated");
         }
     }
 }

@@ -34,9 +34,9 @@ namespace NfxLab.MicroFramework.Drivers.Grove
 
         #region Properties
 
-        public float Humidity { get; private set; }
+        public double Humidity { get; private set; }
 
-        public float Temperature { get; private set; }
+        public double Temperature { get; private set; }
 
         #endregion
 
@@ -56,19 +56,12 @@ namespace NfxLab.MicroFramework.Drivers.Grove
 
         public void Read()
         {
-            FrameworkLogs.Driver.Info("Reading sendor values");
             for (int i = 0; i < ReadRetry; i++)
             {
-                FrameworkLogs.Driver.Debug("- Try #" + i);
-
                 bool succeded = TryRead();
                 if (succeded)
-                {
-                    FrameworkLogs.Driver.Info("Success temperature=", Temperature, " humidity=", Humidity);
                     return;
-                }
 
-                FrameworkLogs.Driver.Debug("Failure, retry...");
                 Thread.Sleep(ReadInterval);
             }
 
@@ -87,29 +80,21 @@ namespace NfxLab.MicroFramework.Drivers.Grove
             Thread.Sleep(2);
 
             // Receiving data
-            FrameworkLogs.Driver.Debug("Start reading data");
             outputPort.Write(false);
             inputPort.EnableInterrupt();
             outputPort.Active = false;
 
             // Waiting data
             if (!dataReceivedEvent.WaitOne(ReadTimeout, false))
-            {
-                //Log.WriteDebug("Read timeout");
-                FrameworkLogs.Driver.Debug("Read timeout");
                 return false;
-            }
-
+            
             // Reading data
             Humidity = ((buffer >> 24) & 0xFFFF) * 0.1F;
-            FrameworkLogs.Driver.Debug("Humidity :", Humidity);
-
+            
             Temperature = ((buffer >> 8) & 0xFFFF) * 0.1F;
-            FrameworkLogs.Driver.Debug("Temperature :", Temperature);
-
+            
             byte checksum = (byte)(buffer & 0xFF);
-            FrameworkLogs.Driver.Debug("Checksum :", checksum);
-
+            
             // Checksum verification
             byte myChecksum = (byte)(buffer >> 8);
             myChecksum += (byte)(buffer >> 16);
@@ -117,22 +102,13 @@ namespace NfxLab.MicroFramework.Drivers.Grove
             myChecksum += (byte)(buffer >> 32);
 
             if (myChecksum != checksum)
-            {
-                FrameworkLogs.Driver.Debug("Checksum error", "computed checksum :", myChecksum);
-                DebugBuffer();
                 return false;
-            }
-
+            
             // Values verification
             if (Temperature < -40 || Temperature > 40
                 || Humidity < 5 || Humidity > 99)
-            {
-                FrameworkLogs.Driver.Debug("Invalid sensor value");
-                DebugBuffer();
                 return false;
-            }
-
-            FrameworkLogs.Driver.Debug("Read OK");
+            
             return true;
         }
 
@@ -157,19 +133,6 @@ namespace NfxLab.MicroFramework.Drivers.Grove
                 inputPort.DisableInterrupt();
                 dataReceivedEvent.Set();
             }
-        }
-
-        [Conditional("DEBUG")]
-        private void DebugBuffer()
-        {
-            char[] chars = new char[64 - 20];
-            for (int i = 63 - 20; i >= 0; i--)
-            {
-                bool bit = ((buffer >> i) & 1) == 1;
-                chars[63 - 20 - i] = bit ? '1' : '0';
-            }
-
-            FrameworkLogs.Driver.Debug("Read buffer :", new string(chars));
         }
         #endregion
     }

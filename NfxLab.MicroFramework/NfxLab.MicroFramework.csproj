@@ -8,15 +8,16 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A18D3694-CA9E-4851-915F-565835E2178A}</ProjectGuid>
-    <TargetFrameworkVersion>v4.3</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE,MF_FRAMEWORK_VERSION_V4_3,NETWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -48,14 +49,12 @@
     <Compile Include="Logging\FileAppender.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Logging\FrameworkLogs.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Logging\IAppender.cs" />
     <Compile Include="Logging\Log.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Logging\TextFormatter.cs">
+    <Compile Include="Logging\LogCategory.cs" />
+    <Compile Include="Logging\LogFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Network\HttpClient.cs">
@@ -70,6 +69,7 @@
     <Compile Include="Network\HttpStatusCode.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Network\NtpClient.cs" />
     <Compile Include="Network\SecurePacket.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -7,7 +7,7 @@ namespace NfxLab.MicroFramework.Logging
 {
     public class Log
     {
-        TextFormatter formatter = new TextFormatter();
+        LogFormatter formatter = new LogFormatter();
 
         public string Name { get; set; }
         public int Level { get; set; }
@@ -20,18 +20,28 @@ namespace NfxLab.MicroFramework.Logging
 
         public void Info(params object[] data)
         {
-            Write(data);
+            Write(LogCategory.Info, data);
         }
 
         [Conditional("DEBUG")]
         public void Debug(params object[] data)
         {
-            Write(data);
+            Write(LogCategory.Debug, data);
         }
 
-        private void Write(params object[] data)
+        public void Warning(params object[] data)
         {
-            string message = formatter.Format(data);
+            Write(LogCategory.Warning, data);
+        }
+
+        public void Error(params object[] data)
+        {
+            Write(LogCategory.Error, data);
+        }
+
+        private void Write(LogCategory category, params object[] data)
+        {
+            string message = formatter.Format(category, data);
 
             foreach (IAppender appender in Appenders)
                 appender.Write(message);
