@@ -70,7 +70,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Network\NtpClient.cs" />
-    <Compile Include="Network\PacketManager.cs">
+    <Compile Include="Network\SecurePacket.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Network\SignalRClient.cs">

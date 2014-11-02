@@ -13,8 +13,8 @@ namespace NfxLab.MicroFramework.Drivers.Grove
         const int MaxBufferSize = 200;
         SerialPort port;
 
-
-        public RFReceiver(string portName)
+        
+        public void Plug(string portName)
         {
             port = new SerialPort(portName, RFTransmitter.BaudRate, Parity.None, 8, StopBits.One);
             port.Open();

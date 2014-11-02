@@ -7,7 +7,7 @@ using Microsoft.SPOT.Hardware;
 
 namespace NfxLab.MicroFramework.Network
 {
-    public class SecurePacket
+    public class PacketManager
     {
         static Random random = new Random();
         static byte currentId;
