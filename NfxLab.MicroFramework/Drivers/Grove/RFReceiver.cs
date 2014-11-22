@@ -1,54 +1,30 @@
-using System;
-using Microsoft.SPOT;
+using NfxLab.MicroFramework.Network;
+using System.Collections;
 using System.IO.Ports;
-using System.Text;
-using Microsoft.SPOT.Hardware;
-using System.Threading;
-using System.IO;
 
 namespace NfxLab.MicroFramework.Drivers.Grove
 {
+    /// <summary>
+    /// Receiver driver for the RF Link Kit.
+    /// </summary>
     public class RFReceiver
     {
-        const int MaxBufferSize = 200;
         SerialPort port;
-
 
         public RFReceiver(string portName)
         {
-            port = new SerialPort(portName, RFTransmitter.BaudRate, Parity.None, 8, StopBits.One);
+            port = new SerialPort(portName, RFTransmitter.BaudRate, RFTransmitter.Parity, RFTransmitter.DataBits, RFTransmitter.StopBits);
             port.Open();
         }
 
-        public Stream ReceiverStream
+        /// <summary>
+        /// Receive the data.
+        /// </summary>
+        /// <returns>An enumeration of byte[].</returns>
+        public IEnumerable ReceiveData()
         {
-            get
-            {
-                return port;
-            }
+            return PacketManager.Read(port);
         }
 
-
-        public bool Enabled
-        {
-            get
-            {
-                return port.IsOpen;
-            }
-            set
-            {
-                if (value)
-                    port.Open();
-                else
-                    port.Close();
-            }
-        }
-
-        public void Unplug()
-        {
-            port.Close();
-            port.Dispose();
-            port = null;
-        }
     }
 }

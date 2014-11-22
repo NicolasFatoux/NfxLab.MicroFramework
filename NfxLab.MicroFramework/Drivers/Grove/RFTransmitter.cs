@@ -1,41 +1,45 @@
-using System;
-using Microsoft.SPOT;
+using NfxLab.MicroFramework.Network;
 using System.IO.Ports;
-using System.Text;
 
 namespace NfxLab.MicroFramework.Drivers.Grove
 {
+    /// <summary>
+    /// Transmitter Driver for the RF Link Kit.
+    /// </summary>
     public class RFTransmitter
     {
-        internal const int BaudRate = 4800;
+        // Serial port parameters
+        internal const int BaudRate = 2400;
+        internal const Parity Parity = System.IO.Ports.Parity.None;
+        internal const int DataBits = 8;
+        internal const StopBits StopBits = System.IO.Ports.StopBits.One;
 
+        // Initial sequence for receiver initialisation
+        readonly byte[] SyncData = new byte[] { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
+       
         SerialPort port;
 
-        public void Plug(string portName)
+        public RFTransmitter(string portName)
         {
-            port = new SerialPort(portName, BaudRate, Parity.None, 8, StopBits.One);
+            port = new SerialPort(portName, BaudRate, Parity, DataBits, StopBits);
+        }
+
+        /// <summary>
+        /// Send data
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="repeat">number of time the packet will be repeated</param>
+        public void Send(byte[] data, int repeat = 0)
+        {
+            var packet = PacketManager.BuildPacket(data);
+
             port.Open();
-        }
-
-        public void Unplug()
-        {
+            
+            port.Write(SyncData, 0, SyncData.Length);
+            for (int i = 0; i < repeat + 1; i++)
+                port.Write(packet, 0, packet.Length);
+            
             port.Close();
-            port.Dispose();
-            port = null;
         }
-
-        public void Send(string data)
-        {
-            var bytes = Encoding.UTF8.GetBytes(data);
-
-             port.Write(bytes, 0, bytes.Length);
-        }
-
-        public void Send(byte[] data)
-        {
-            port.Write(data, 0, data.Length);
-        }
-
-
     }
 }

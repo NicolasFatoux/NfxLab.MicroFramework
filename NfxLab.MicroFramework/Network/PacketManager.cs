@@ -1,17 +1,14 @@
 #if NETWORK
 using System;
-using Microsoft.SPOT;
 using System.Collections;
 using System.IO;
-using Microsoft.SPOT.Hardware;
 
 namespace NfxLab.MicroFramework.Network
 {
     public class PacketManager
     {
-        static Random random = new Random();
-        static byte currentId;
-        static readonly byte[] StartSequence = new byte[3] { 0x66, 0x66, 0x66 };
+        static byte currentId = 0;
+        static readonly byte[] StartSequence = new byte[3] { 0xFF, 0xFF, 0xFF };
 
         /// <summary>
         /// Builds a Secure Packet
@@ -26,7 +23,7 @@ namespace NfxLab.MicroFramework.Network
             int index;
 
             // Creating packet
-            byte[] packet = new byte[StartSequence.Length + 4 + data.Length];
+            byte[] packet = new byte[StartSequence.Length + 3 + data.Length];
 
             // Writing start sequence
             Array.Copy(StartSequence, packet, StartSequence.Length);
@@ -34,12 +31,12 @@ namespace NfxLab.MicroFramework.Network
 
             // Writing header
             // - ID
-            byte[] id = new byte[1];
-            random.NextBytes(id);
-            packet[index++] = id[0];
+            packet[index++] = currentId++;
 
             // - Checksum
-            packet[index++] = CheckSum(data);
+            var checksum = CheckSum(data);
+            packet[index++] = checksum;
+
             // - Length
             packet[index++] = (byte)data.Length;
 
@@ -51,10 +48,10 @@ namespace NfxLab.MicroFramework.Network
 
 
         /// <summary>
-        /// Reads Secure Packet data from a Stream
+        /// Reads data from a Stream
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>An IEnumerable of byte[] corresponding packet data</returns>
+        /// <returns>An IEnumerable of byte[] containing packet data</returns>
         public static IEnumerable Read(Stream stream)
         {
             while (stream.CanRead)
@@ -66,10 +63,10 @@ namespace NfxLab.MicroFramework.Network
                 // - ID
                 byte id = (byte)stream.ReadByte();
                 if (id == currentId)
+                {
                     // We skip the packet if it has already been read
                     continue;
-
-                currentId = id;
+                }
 
                 // - Checksum & size
                 byte checksum = (byte)stream.ReadByte();
@@ -82,9 +79,15 @@ namespace NfxLab.MicroFramework.Network
 
                 // Integrity check
                 byte dataChecksum = CheckSum(data);
-                if (dataChecksum == checksum)
-                    // Checksum OK
-                    yield return data;
+                if (dataChecksum != checksum)
+                {
+                    // Checksum doesn't match
+                    continue;
+                }
+
+                // Checksum OK
+                currentId = id;
+                yield return data;
             }
         }
 
@@ -104,7 +107,7 @@ namespace NfxLab.MicroFramework.Network
         }
 
         /// <summary>
-        /// Reads a Secure Packet start sequence from a Stream.
+        /// Reads a start sequence from a Stream.
         /// </summary>
         /// <param name="stream">Stream</param>
         static void ReadStartSequence(Stream stream)
