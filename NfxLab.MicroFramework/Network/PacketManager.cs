@@ -23,7 +23,7 @@ namespace NfxLab.MicroFramework.Network
             int index;
 
             // Creating packet
-            byte[] packet = new byte[StartSequence.Length + 3 + data.Length];
+            byte[] packet = new byte[StartSequence.Length + 4 + data.Length];
 
             // Writing start sequence
             Array.Copy(StartSequence, packet, StartSequence.Length);
@@ -34,8 +34,9 @@ namespace NfxLab.MicroFramework.Network
             packet[index++] = currentId++;
 
             // - Checksum
-            var checksum = CheckSum(data);
-            packet[index++] = checksum;
+            byte[] checksum = CheckSum(data);
+            packet[index++] = checksum[0];
+            packet[index++] = checksum[1];
 
             // - Length
             packet[index++] = (byte)data.Length;
@@ -69,7 +70,9 @@ namespace NfxLab.MicroFramework.Network
                 }
 
                 // - Checksum & size
-                byte checksum = (byte)stream.ReadByte();
+                byte checksum0 = (byte)stream.ReadByte();
+                byte checksum1 = (byte)stream.ReadByte();
+                byte[] checksum = new byte[] { checksum0, checksum1 };
                 byte size = (byte)stream.ReadByte();
 
                 // Reading data
@@ -78,8 +81,8 @@ namespace NfxLab.MicroFramework.Network
                     data[i] = (byte)stream.ReadByte();
 
                 // Integrity check
-                byte dataChecksum = CheckSum(data);
-                if (dataChecksum != checksum)
+                byte[] dataChecksum = CheckSum(data);
+                if (dataChecksum[0] != checksum[0] && dataChecksum[1] != checksum[1])
                 {
                     // Checksum doesn't match
                     continue;
@@ -96,12 +99,18 @@ namespace NfxLab.MicroFramework.Network
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        static byte CheckSum(byte[] data)
+        static byte[] CheckSum(byte[] data)
         {
-            byte checksum = 0;
+            byte[] checksum = { 0x00, 0x00 };
 
-            foreach (byte d in data)
-                checksum = (byte)(checksum ^ d);
+            for (int i = 0; i < data.Length; i += 2)
+            {
+                checksum[0] = (byte)(checksum[i] ^ data[i]);
+
+                int j = i + 1;
+                if (j <= data.Length)
+                    checksum[1] = (byte)(checksum[1] ^ data[j]);
+            }
 
             return checksum;
         }
