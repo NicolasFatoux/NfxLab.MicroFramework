@@ -73,12 +73,6 @@
     <Compile Include="Network\PacketManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Network\SignalRClient.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Network\SignalRReceiver.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Network\XivelyClient.cs">
       <SubType>Code</SubType>
     </Compile>
