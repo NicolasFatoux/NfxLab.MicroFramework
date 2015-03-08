@@ -53,10 +53,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logging\IAppender.cs" />
+    <Compile Include="Logging\LogBase.cs" />
     <Compile Include="Logging\Log.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Logging\LogCategory.cs" />
     <Compile Include="Logging\LogFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
