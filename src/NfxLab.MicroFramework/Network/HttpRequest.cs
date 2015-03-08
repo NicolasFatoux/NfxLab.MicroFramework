@@ -70,7 +70,7 @@ namespace NfxLab.MicroFramework.Network
             StreamWriter writer = new StreamWriter(stream);
 
             // HTTP header
-            writer.WriteLine(Method + " " + Query + " HTTP/1.1");
+            writer.WriteLine(Method + " " + Url + " HTTP/1.1");
 
 
             // Request headers

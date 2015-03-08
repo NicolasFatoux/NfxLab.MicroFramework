@@ -30,11 +30,19 @@ namespace NfxLab.MicroFramework.Network
 
 
             // Status line
-            var statusLine = reader.ReadLine();
-            var elements = statusLine.Split(' ');
+            string statusLine = reader.ReadLine();
 
-            response.StatusCode = int.Parse(elements[1]);
-            response.Reason = elements[2];
+            // Remove HTTP 
+            int i = statusLine.IndexOf(' ');
+            statusLine = statusLine.Substring(i + 1);
+
+            // Get status code
+            i = statusLine.IndexOf(' ');
+            string statusCode = statusLine.Substring(0, i);
+            response.StatusCode = int.Parse(statusCode);
+
+            // Reason
+            response.Reason = statusLine.Substring(i + 1);
 
             // Header
             string line = null;
