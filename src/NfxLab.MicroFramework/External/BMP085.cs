@@ -22,7 +22,7 @@ namespace NfxLab.MicroFramework.External
         private readonly byte[] _pressureWaitTime = new byte[] { 5, 8, 14, 26 };
 
         private const int TransactionTimeout = 1000; //ms
-        private Timer _sensorTimer;
+        
         public enum DeviceMode
         {
             UltraLowPower = 0,
