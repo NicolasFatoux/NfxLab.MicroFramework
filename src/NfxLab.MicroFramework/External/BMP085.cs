@@ -22,7 +22,7 @@ namespace NfxLab.MicroFramework.External
         private readonly byte[] _pressureWaitTime = new byte[] { 5, 8, 14, 26 };
 
         private const int TransactionTimeout = 1000; //ms
-        
+
         public enum DeviceMode
         {
             UltraLowPower = 0,
@@ -56,7 +56,7 @@ namespace NfxLab.MicroFramework.External
             // Take initial measurements.
             TakeMeasurements();
 
-       }
+        }
 
         /// <summary>
         /// Calculates the compensated pressure and temperature.
@@ -197,11 +197,6 @@ namespace NfxLab.MicroFramework.External
         public float Celsius
         {
             get { return _celsius; }
-        }
-
-        public void Dispose()
-        {
-            _sensorTimer.Dispose();
         }
 
     }

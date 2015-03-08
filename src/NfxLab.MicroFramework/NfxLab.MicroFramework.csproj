@@ -53,7 +53,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logging\IAppender.cs" />
-    <Compile Include="Logging\LogBase.cs" />
+    <Compile Include="Logging\FakeLog.cs" />
     <Compile Include="Logging\Log.cs">
       <SubType>Code</SubType>
     </Compile>
