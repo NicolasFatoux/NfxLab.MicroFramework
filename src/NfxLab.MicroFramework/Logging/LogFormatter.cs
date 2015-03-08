@@ -8,30 +8,10 @@ namespace NfxLab.MicroFramework.Logging
     {
         StringBuilder builder = new StringBuilder();
 
-        public string Format(LogCategory category, object[] datas)
+        public string Format(int indent, object[] datas)
         {
-            // Time
-            builder.Append(DateTime.Now);
-            builder.Append('\t');
-
-            // Category
-            switch (category)
-            {
-                case LogCategory.Info:
-                    builder.Append("INFO");
-                    break;
-                case LogCategory.Debug:
-                    builder.Append("DEBUG");
-                    break;
-                case LogCategory.Warning:
-                    builder.Append("WARNING");
-                    break;
-                case LogCategory.Error:
-                    builder.Append("ERROR");
-                    break;
-                default:
-                    break;
-            }
+            // Indentation
+            builder.Append(' ', indent);
 
             // Data
             foreach (object data in datas)

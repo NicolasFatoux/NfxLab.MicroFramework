@@ -2,6 +2,7 @@ using System;
 using Microsoft.SPOT;
 using System.Collections;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace NfxLab.MicroFramework.Logging
 {
@@ -9,42 +10,45 @@ namespace NfxLab.MicroFramework.Logging
     {
         LogFormatter formatter = new LogFormatter();
 
-        public string Name { get; set; }
-        public int Level { get; set; }
-        public IAppender[] Appenders { get; set; }
+        public int Indent { get; set; }
+
+        public IAppender[] Appenders { get; private set; }
 
         public Log(params IAppender[] appenders)
         {
             this.Appenders = appenders;
         }
 
-        public void Info(params object[] data)
+        public virtual void AssemblyInfo()
         {
-            Write(LogCategory.Info, data);
+            Write(Assembly.GetExecutingAssembly());
+        }
+
+
+        public virtual void Title(string name)
+        {
+            Line();
+            Write(name);
+            Line();
+        }
+
+        public virtual void Line()
+        {
+            Write(new string('_', 20));
         }
 
         [Conditional("DEBUG")]
-        public void Debug(params object[] data)
+        public virtual void WriteDebug(params object[] data)
         {
-            Write(LogCategory.Debug, data);
+            Write(data);
         }
 
-        public void Warning(params object[] data)
+        public virtual void Write(params object[] data)
         {
-            Write(LogCategory.Warning, data);
-        }
-
-        public void Error(params object[] data)
-        {
-            Write(LogCategory.Error, data);
-        }
-
-        private void Write(LogCategory category, params object[] data)
-        {
-            string message = formatter.Format(category, data);
+            string message = formatter.Format(Indent, data);
 
             foreach (IAppender appender in Appenders)
                 appender.Write(message);
-        }        
+        }
     }
 }
